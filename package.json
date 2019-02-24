@@ -1,0 +1,22 @@
+{
+  "name": "express-moon",
+  "version": "1.0.0",
+  "description": "简单版 express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoonWang/express.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MoonWang/express/issues"
+  },
+  "homepage": "https://github.com/MoonWang/express#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
