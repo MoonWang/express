@@ -74,8 +74,6 @@ app.get('/', (req, res, next) => {
 }).get('/', (req, res, next) => {
     console.log(3.1);
     res.end('ok');
-}).get('/', (err, req, res, next) => {
-    res.end('catch: ' + err);
 });
 app.listen(8080);
 ```
@@ -115,5 +113,9 @@ app.listen(8080);
     - 丰富 HTTP 请求方法
         - 使用第三方包 methods ，等同于 http.METHODS ，但元素均小写
     - 增加多 handler 功能
+        - 不定参处理，apply、slice
     - 增加链式调用功能
+        - Application.prototype[method] 返回 this
     - 增加错误捕获功能
+        - next 传参时，会跳过后续处理函数，直接到错误中间件处理
+        - 前面提到了，用户的 handler 是在 route.dispatch 方法中调用的，handler 中的 next 方法也是 dispatch 中定义，所以要先在这里跳出
