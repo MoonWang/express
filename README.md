@@ -82,14 +82,16 @@ app.listen(8080);
 
 ### 2.3 代码实现思路
 
+> 整个路由的请求处理过程类似于二维数组的深度优先遍历
+
 路由层级描述：
 ```
 ├── Router 路由系统
 │   └── stack 数组
-│       └── layer 层 <- path + route.dispath 
+│       └── layer 层 <- path + route.dispath ，path 区分
 │           └── route 路由 <- path
 │               └── stack 数组
-│                   └──  layer 层 <- path '/' + handler
+│                   └──  layer 层 <- path '/' + handler ，method 分别
 ```
 
 1. 将 app 从字面量变为 Application 类
@@ -97,5 +99,15 @@ app.listen(8080);
     - 将 get 和 listen 方法改为 Application 类的原型方法
     - 此时将 router 和应用分离开，也采用构建实例的方式，且 app.get 和 app.listen 配置路由和处理路由都将由 Router 类的实例去处理
 2. 封装 Router（按照上面的层级描述）
-    - 配置路由的第一层应该是 layer ，它拥有特殊属性 route 才是真正的路由
-    - 配置路由的第二层才是 route ，它的特殊属性 method 标明是否有对应 hanlder 
+    1. 处理 app.get 配置路由
+        - `Router.prototype.route` 创建第一层 `layer` ，用 `path` 作为第一层遍历的标识，存储的是 `route.dispatch`
+        - `Route.prototype.get` 配置第二层 `layer` ，用 `method` 作为第二层遍历的标识，存储的是用户传入的 `handler`
+    2. 处理 app.listen 处理请求
+        - `Router.prototype.handler` 第一层遍历方法
+            - 用 path 遍历第一层 layer ，匹配到就调用 route.dispatch 进入第二层遍历
+            - 遍历不到就继续向下 next ，遍历下一个第一层级 layer (其中每个元素存储的是一个路由)
+            - 触达边界时，调用 out 方法( app.listen 传入的 done 方法)结束整个遍历
+        - `Route.prototype.dispatch` 第二层遍历方法
+            - 用 method 遍历第二层 layer ，匹配到就执行用户传入的 handler 方法，并将第二层的 next 传出，交由用户控制向下执行
+            - 遍历不到就继续向下 next ，遍历下一个第二层级 layer (其中每个元素存储的是一个 handler)
+            - 触达边界时，调用 out 方法( Router.prototype.handler 传入的 next 方法)结束当前第二层 layer 遍历，回到第一层的遍历
