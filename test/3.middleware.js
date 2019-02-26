@@ -4,8 +4,8 @@ const app = express();
 
 app.use((req, res, next) => {
     console.log('Ware1:', Date.now());
-    next();
-    // next('wrong');
+    // next();
+    next('wrong');
 });
 app.get('/', (req, res, next) => {
     res.end('1');
