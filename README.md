@@ -119,3 +119,54 @@ app.listen(8080);
     - 增加错误捕获功能
         - next 传参时，会跳过后续处理函数，直接到错误中间件处理
         - 前面提到了，用户的 handler 是在 route.dispatch 方法中调用的，handler 中的 next 方法也是 dispatch 中定义，所以要先在这里跳出
+
+## 三、实现中间件
+
+### 3.1 基本功能
+
+- application.use 方法添加中间件
+- 二级路由实现
+    - 修改 Router 类为普通函数，返回 router 函数，用于支持中间件定义二级路由
+    - router 处理中间件
+
+### 3.2 测试用例
+
+```javascript
+const express = require('express');
+// const express = require('../lib/express');
+const app = express();
+
+app.use((req, res, next) => {
+    console.log('Ware1:', Date.now());
+    next();
+    // next('wrong');
+});
+app.get('/', (req, res, next) => {
+    res.end('1');
+});
+
+// 声明二级路由系统，也拥有各种请求方法，而且还有 use 方法添加私有中间件
+const user = express.Router();
+user.use((req, res, next) => {
+    console.log('Ware2', Date.now());
+    next();
+});
+user.use('/2', (req, res, next) => {
+    res.end('2');
+});
+// 使用二级路由
+app.use('/user', user);
+
+// 错误中间件
+app.use((err, req, res, next) => {
+    res.end('catch ' + err);
+});
+app.listen(8080);
+```
+
+### 3.3 代码实现思路
+
+1. 添加 express.Router ，用于创建二级路由实例
+    - 测试用例中 app.use('/user', user); 此时 user 是个中间件的处理函数，格式必然是 function(req, res, next)
+    - 所以 Router 类构造函数要改成普通函数，且返回一个函数用于满足上面要求
+    - 为了使函数 router 依然拥有原来的几个原型方法，需要使用 `Object.setPrototypeOf` 设置原型对象
