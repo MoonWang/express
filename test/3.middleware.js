@@ -14,7 +14,7 @@ app.get('/', (req, res, next) => {
 // 声明二级路由系统，也拥有各种请求方法，而且还有 use 方法添加私有中间件
 const user = express.Router();
 user.use((req, res, next) => {
-    console.log('Ware2', Date.now());
+    console.log('Ware2:', Date.now());
     next();
 });
 user.use('/2', (req, res, next) => {

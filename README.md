@@ -170,3 +170,8 @@ app.listen(8080);
     - 测试用例中 app.use('/user', user); 此时 user 是个中间件的处理函数，格式必然是 function(req, res, next)
     - 所以 Router 类构造函数要改成普通函数，且返回一个函数用于满足上面要求
     - 为了使函数 router 依然拥有原来的几个原型方法，需要使用 `Object.setPrototypeOf` 设置原型对象
+2. 添加 app.use 方法
+    - 中间件和普通路由放在同一个数组 _router.stack 中，app.use 调用的应该是 router.use
+3. 处理子路由，修改 router.handler 方法
+    - 匹配路径成功后，需要区分中间件层和路由层做不同的处理，此时的区分标准就是是否存在 layer.route ，路由层的处理不变
+    - 中间件层可以添加子路由，此时需要处理路径问题，当前次调用 layer.handle 方法前需要去除前缀路径，下次调用 next 时要将路径缓存，所以有一个 removed 变量存储前缀路径
