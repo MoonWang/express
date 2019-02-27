@@ -187,3 +187,62 @@ app.listen(8080);
 
 规则添加过程:
 <img src="./images/addRules.png">
+
+## 四、路径参数相关
+
+### 4.1 基本功能
+
+- req.params 获取路由中的路径参数
+    - '/user/:id/:name' 和 '/user/1/moon' 匹配结果 { id: 1, name: moon }
+- app.param 定义存在指定 param 的路径公共的处理操作
+    - 在 Router.handle 中，process_params 函数一次调用参数处理函数
+
+### 4.2 测试用例
+
+```javascript
+// const express = require('express');
+const express = require('../lib/express');
+const app = express();
+
+app.param('uid', (req, res, next, val, name) => {
+    req.user = {
+        id: 1,
+        name: 'moon'
+    };
+    next();
+})
+app.param('uid', (req, res, next, val, name) => {
+    req.user.name = 'moon.wang';
+    next();
+})
+app.get('/user/:uid', (req, res) => {
+    console.log(req.user);  // 前面配置的
+    console.log(req.params); // 路径参数
+    res.end('user');
+});
+
+app.listen(8080);
+```
+
+### 4.3 代码实现思路
+
+1. 将 path 编译成正则，并缓存 params 的键
+    - 使用第三方包 path-to-regexp 提取 params
+        - 原理：replace + 正则
+            ```javascript
+            let keys = [];
+            function pathToRegexp(path, keys) {
+                return path.replace(/:([^\/]+)/g, function () {
+                    keys.push({
+                        name: arguments[1],
+                        optional: false,
+                        offset: arguments[2]
+                    });
+                    return '(?:([^\/]+?))';
+                });
+            }
+            let result = pathToRegexp(path, keys);
+            // result: /^\/user\/(?:([^\/]+?))\/(?:([^\/]+?))\/?$/i
+            ```
+    - 这个操作应该用在哪？应该是在创建路由规则的时候处理，那么具体应该在哪一步？应该是`第一层 layer` 实例创建的时候，因为该 layer 就是用 path 来区分的
+2. 

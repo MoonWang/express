@@ -18,6 +18,7 @@
   "homepage": "https://github.com/MoonWang/express#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "methods": "^1.1.2"
+    "methods": "^1.1.2",
+    "path-to-regexp": "^3.0.0"
   }
 }
