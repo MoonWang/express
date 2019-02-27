@@ -8,11 +8,19 @@
 ├── LICENSE
 ├── README.md
 ├── lib                     框架源码
-│   └── express.js          主入口
+│   ├── application.js      app 应用构造函数
+│   ├── express.js          主入口
+│   └── router              
+│       ├── index.js        router 路由器构造函数
+│       ├── layer.js        layer 层构造函数
+│       └── route.js        route 路由构造函数
 ├── package-lock.json
 ├── package.json
 └── test                    测试用例
-    └── 1.base.js
+    ├── 1.base.js           基本功能
+    ├── 2.router.js         路由系统
+    ├── 3.middleware.js     中间件
+    └── 4.params.js         路径参数
 ```
 
 ## 一、构建基本服务器
@@ -256,3 +264,50 @@ app.listen(8080);
     2. 调用
         - 执行时，缓存的回调方法应该在实际的路由处理函数之前调用
         - 调用过程其实就是遍历前面获取的 keys ，查看是否有对应的回调函数，有则执行，无则继续遍历直到完成后，跳回路由处理主流程
+
+## 五、模板引擎
+
+### 5.1 基本功能
+
+### 5.2 测试用例
+
+```javascript
+```
+
+### 5.3 代码实现思路
+
+- 模板引擎原理
+    ```javascript
+    // 简单版，将占位 <%=name%> 替换成 data[name] 的值
+    function render(tmplStr, data) {
+        return tmplStr.replace(/<%=(\w+?)%>/g, function () {
+            // arguments[1] 即正则匹配到的 \w+? 内容，也就是占位的 key
+            return data[arguments[1]];
+        });
+    }
+
+    // 进阶版，添加函数头和尾，构成完整函数体执行，并返回结果
+    function render(tmplStr, data) {
+        // with 语句，将参数对象添加到内部语句的作用域链顶部，可以减少变量的长度，如 data.a 直接写 a
+        let head = "let tpl = ``;\nwith (data) {\n tpl+=`";
+
+        // 先替换占位，<%=name%> 替换成 ${name} ，用于后面拼接模板字符串占位
+        tmplStr = tmplStr.replace(/<%=([\s\S]+?)%>/g, function () {
+            return "${" + arguments[1] + "}";
+        });
+        // 剩余 <%if%> 之类的解析成 js 语句，除此之外的内容作为模板字符串的内容
+        tmplStr = tmplStr.replace(/<%([\s\S]+?)%>/g, function () {
+            return "`;\n" + arguments[1] + "\n;tpl+=`";
+        });
+
+        let tail = "`}\n return tpl; ";
+
+        let html = head + tmplStr + tail;
+        // 形参 data，函数体是个包含函数定义的 js 语句字符串
+        let fn = new Function('data', html);
+
+        let result = fn(data);
+        
+        return result;
+    }
+    ```
