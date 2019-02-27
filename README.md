@@ -174,3 +174,16 @@ app.listen(8080);
     - 匹配路径成功后，需要区分中间件层和路由层做不同的处理，此时的区分标准就是是否存在 `layer.route` ，路由层的处理不变
     - 中间件层可以添加子路由，此时需要处理路径问题，当前次调用 layer.handle 方法前需要去除`前缀路径`，下次调用 next 时要将路径缓存，所以有一个 `removed` 变量存储前缀路径
 4. 错误处理，错误中间件
+
+### 3.4 路由、中间件的总结
+
+> [从express源码中探析其路由机制](https://cnodejs.org/topic/545720506537f4d52c414d87)
+
+直观层级展示：
+<img src="./images/router.stack.png">
+
+执行顺序展示：
+<img src="./images/router.stack.running.png">
+
+规则添加过程:
+<img src="./images/addRules.png">
