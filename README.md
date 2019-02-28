@@ -269,45 +269,83 @@ app.listen(8080);
 
 ### 5.1 基本功能
 
+- 开发或绑定渲染引擎
+- 注册渲染引擎
+- 配置渲染引擎，指定模版路径
+- 渲染模版引擎
+
 ### 5.2 测试用例
 
 ```javascript
+// const express = require('express');
+const express = require('../lib/express');
+
+const path = require('path');
+const app = express();
+
+// 设置模板引擎渲染方法
+// app.engine('html', require('ejs').__express);
+app.engine('html', require('../lib/html'));
+// 设置模板存放根目录
+app.set('views', path.resolve(__dirname, 'views'));
+// 设置模板默认后缀名
+app.set('view engine', 'html');
+
+app.get('/', (req, res, next) => {
+    res.render('index', {
+        title: 'hello',
+        user: {
+            name: 'moon'
+        }
+    });
+});
+
+app.listen(8080);
 ```
 
 ### 5.3 代码实现思路
 
-- 模板引擎原理
-    ```javascript
-    // 简单版，将占位 <%=name%> 替换成 data[name] 的值
-    function render(tmplStr, data) {
-        return tmplStr.replace(/<%=(\w+?)%>/g, function () {
-            // arguments[1] 即正则匹配到的 \w+? 内容，也就是占位的 key
-            return data[arguments[1]];
-        });
-    }
+模板引擎原理：
+```javascript
+// 简单版，将占位 <%=name%> 替换成 data[name] 的值
+function render(tmplStr, data) {
+    return tmplStr.replace(/<%=(\w+?)%>/g, function () {
+        // arguments[1] 即正则匹配到的 \w+? 内容，也就是占位的 key
+        return data[arguments[1]];
+    });
+}
 
-    // 进阶版，添加函数头和尾，构成完整函数体执行，并返回结果
-    function render(tmplStr, data) {
-        // with 语句，将参数对象添加到内部语句的作用域链顶部，可以减少变量的长度，如 data.a 直接写 a
-        let head = "let tpl = ``;\nwith (data) {\n tpl+=`";
+// 进阶版，添加函数头和尾，构成完整函数体执行，并返回结果
+function render(tmplStr, data) {
+    // with 语句，将参数对象添加到内部语句的作用域链顶部，可以减少变量的长度，如 data.a 直接写 a
+    let head = "let tpl = ``;\nwith (data) {\n tpl+=`";
 
-        // 先替换占位，<%=name%> 替换成 ${name} ，用于后面拼接模板字符串占位
-        tmplStr = tmplStr.replace(/<%=([\s\S]+?)%>/g, function () {
-            return "${" + arguments[1] + "}";
-        });
-        // 剩余 <%if%> 之类的解析成 js 语句，除此之外的内容作为模板字符串的内容
-        tmplStr = tmplStr.replace(/<%([\s\S]+?)%>/g, function () {
-            return "`;\n" + arguments[1] + "\n;tpl+=`";
-        });
+    // 先替换占位，<%=name%> 替换成 ${name} ，用于后面拼接模板字符串占位
+    tmplStr = tmplStr.replace(/<%=([\s\S]+?)%>/g, function () {
+        // 使用 arguments 时不要用箭头函数
+        return "${" + arguments[1] + "}";
+    });
+    // 剩余 <%if%> 之类的解析成 js 语句，除此之外的内容作为模板字符串的内容
+    tmplStr = tmplStr.replace(/<%([\s\S]+?)%>/g, function () {
+        return "`;\n" + arguments[1] + "\n;tpl+=`";
+    });
 
-        let tail = "`}\n return tpl; ";
+    let tail = "`}\n return tpl; ";
 
-        let html = head + tmplStr + tail;
-        // 形参 data，函数体是个包含函数定义的 js 语句字符串
-        let fn = new Function('data', html);
+    let html = head + tmplStr + tail;
+    // 形参 data，函数体是个包含函数定义的 js 语句字符串
+    let fn = new Function('data', html);
 
-        let result = fn(data);
-        
-        return result;
-    }
-    ```
+    let result = fn(data);
+    
+    return result;
+}
+```
+
+- 开发渲染引擎，基于上面的模板引擎原理
+- 注册渲染引擎，app.engine(ext, fn) 定义指定后缀的文件所需的渲染引擎
+    - app.engines 按照键值对的方式，存储 ext: fn 
+- 配置渲染引擎，app.set(key, val) 设置参数
+    - app.settings 按照键值对存储配置参数
+- 获取引擎配置，app.get(key) 获取参数(此时必须只有一个参数，用于区别路由设定的 get)
+- 渲染模板，app.render
