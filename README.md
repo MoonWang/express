@@ -196,6 +196,28 @@ app.listen(8080);
 规则添加过程:
 <img src="./images/addRules.png">
 
+### 3.5 中间件分类
+
+- 应用级中间件
+    - app.use、app.METHOD 
+- 路由级中间件
+    - router.use、router.METHOD
+- 错误处理中间件
+    - app.use(function (err, req, res, next) {})
+- 内置中间件
+    - express.static
+    - express.json
+    - express.urlencoded
+- 第三方中间件
+
+### 3.5 内置中间件
+
+> 路由也是一种中间件，是应用级中间件。
+
+- 内置 query 、path 解析
+- res.json 方法
+- res.render 方法
+
 ## 四、路径参数相关
 
 ### 4.1 基本功能

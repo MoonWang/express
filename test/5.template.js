@@ -12,20 +12,20 @@ app.set('views', path.resolve(__dirname, 'views'));
 // 设置默认后缀名，当 render 没有指定模板后台名时，使用 html 作为后缀名
 app.set('view engine', 'html');
 
-app.use((req, res, next) => {
-    res.render = function(name, options) {
-        let ext = '.' + app.get('view engine');
-        name = name.indexOf('.') != -1 ? name : name + ext;
-        let filepath = path.join(app.get('views'), name);
-        let render = app.engines[ext];
-        function done(err, html) {
-            res.setHeader('Content-Type', 'text/html');
-            res.end(html);
-        }
-        render(filepath, options, done);
-    };
-    next();
-});
+// app.use((req, res, next) => {
+//     res.render = function(name, options) {
+//         let ext = '.' + app.get('view engine');
+//         name = name.indexOf('.') != -1 ? name : name + ext;
+//         let filepath = path.join(app.get('views'), name);
+//         let render = app.engines[ext];
+//         function done(err, html) {
+//             res.setHeader('Content-Type', 'text/html');
+//             res.end(html);
+//         }
+//         render(filepath, options, done);
+//     };
+//     next();
+// });
 
 app.get('/', (req, res, next) => {
     res.render('index', {
