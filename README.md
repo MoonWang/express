@@ -408,3 +408,5 @@ express.static(root, [options]);
     - 测试：http://localhost:8080/.test
 3. 设置 redirect ，设置 index 
     - 测试：http://localhost:8080/help
+4. 设置 extensions 
+    - http://localhost:8080/index2

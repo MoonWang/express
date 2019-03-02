@@ -10,6 +10,7 @@ function static(root, options = {}) {
         dotfiles = 'ignore',
         redirect = true,
         index = 'index.html',
+        extensions = false
     } = options;
     
     function serve_static(req, res, next) {
@@ -36,7 +37,21 @@ function static(root, options = {}) {
 
         fs.stat(file, (err, stats) => {
             if(err) {
-                return next();
+                // 4. 设置 extension
+                if(lastPath.indexOf('.') == -1 && Array.isArray(extensions)) {
+                    for(let i = 0; i < extensions.length; i++) {
+                        let url = pathname + '.' + extensions[i];
+                        let file = path.join(root, url);
+                        try {
+                            fs.statSync(file);
+                            req.url = url;
+                            return serve_static(req, res, next);
+                        } catch(e) {}
+                    }
+                    return next();
+                } else {
+                    return next();
+                }
             }
             // 3.1 判断是否为目录
             if(stats.isDirectory()) {
