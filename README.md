@@ -410,3 +410,5 @@ express.static(root, [options]);
     - 测试：http://localhost:8080/help
 4. 设置 extensions 
     - http://localhost:8080/index2
+5. 设置 etag、lastModified、maxAge
+6. 设置 setHeaders 

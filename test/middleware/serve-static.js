@@ -10,7 +10,11 @@ function static(root, options = {}) {
         dotfiles = 'ignore',
         redirect = true,
         index = 'index.html',
-        extensions = false
+        extensions = false,
+        etag = true,
+        lastModified = true,
+        maxAge = 0,
+        setHeaders
     } = options;
     
     function serve_static(req, res, next) {
@@ -31,9 +35,6 @@ function static(root, options = {}) {
             }
         }
 
-        // 1.2 根据 mime 类型设置响应头
-        let contentType = mime.getType(pathname);
-        res.setHeader('Content-Type', contentType);
 
         fs.stat(file, (err, stats) => {
             if(err) {
@@ -70,6 +71,26 @@ function static(root, options = {}) {
                     file += index;
                 }
             }
+            // 5. 设置缓存相关
+            if (etag) {
+                let mtime = stats.mtime.getTime().toString(16)
+                let size = stats.size.toString(16);
+                res.setHeader('ETag', '"' + size + '-' + mtime + '"');
+            }
+            if (lastModified) {
+                res.setHeader('Last-Modified', stats.mtime.toUTCString());
+            }
+            res.setHeader('Cache-Control', `max-age=${maxAge}`);
+
+            // 1.2 根据 mime 类型设置响应头
+            let contentType = mime.getType(pathname);
+            res.setHeader('Content-Type', contentType);
+
+            // 6. 调用用户传入方法
+            if(setHeaders) {
+                setHeaders(res, pathname, stats);
+            }
+
             // 1.1 基础服务
             fs.createReadStream(file).pipe(res);
         })

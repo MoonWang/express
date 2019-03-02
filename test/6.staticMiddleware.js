@@ -13,7 +13,7 @@ app.use(static(path.join(__dirname, 'public'), {
     // etag: false,
     // lastModified: false,
     // maxAge: 60 * 1000,
-    // setHeaders(req, res, cb) {
+    // setHeaders(res, path, stat) {
     //     res.setHeader('time', Date.now());
     // }
 }));
