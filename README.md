@@ -212,8 +212,6 @@ app.listen(8080);
 
 ### 3.5 内置中间件
 
-> 路由也是一种中间件，是应用级中间件。
-
 - 内置 query 、path 解析
 - res.json 方法
 - res.render 方法
@@ -370,4 +368,38 @@ function render(tmplStr, data) {
 - 配置渲染引擎，app.set(key, val) 设置参数
     - app.settings 按照键值对存储配置参数
 - 获取引擎配置，app.get(key) 获取参数(此时必须只有一个参数，用于区别路由设定的 get)
-- 渲染模板，app.render
+- 渲染模板，res.render
+    - Application.prototype.render 方法执行模板渲染
+    - res.render 调用入口
+
+# 重要第三方中间件
+
+## 一、serve-static 静态文件中间件
+
+> 唯一一个 Express 内置的第三方中间件，负责托管应用内的静态资源
+
+### 1.1 用法
+
+```javascript
+express.static(root, [options]);
+```
+
+- root：静态资源文件所在的根目录
+- options 
+    - dotfiles[String] 控制点文件服务，可选值为 'allow'、'deny'、'ignore'，默认 ignore
+        - 点文件，如 .gitignore 
+        - ignore 返回 404， deny 返回 403（测试也是404）
+    - index[Mixed] 设置目录访问的返回，设置为 false 可以禁止目录访问，默认 'index.html'
+    - redirect[Boolean] 当路径名是目录时，重定向到包含结尾/的目录，默认 true
+    - extensions[Boolean] 设置文件后缀名补充，默认 false 
+        - 可以设置 ['html', 'htm']
+    - etag[Boolean] 控制 etag 生成，默认 true
+    - lastModified[Boolean] 控制 lastModified 生成，默认 true
+    - maxAge[Number] 设置Cache-Control报头的缓存控制时间，单位为毫秒，默认0
+    - setHeaders[Function] 函数用于为文件设置HTTP头	
+
+### 1.2 实现
+
+1. 约定第三方中间件都是一个函数(用于传参)，执行后返回 function(req, res, next){} 函数用于 app.use 添加
+2. 读取静态文件，查看是否存在该路径，不存在则跳过当前中间件，存在则读流写给 res ，并设置 Content-Type 响应头
+    - 测试：http://localhost:8080/index.html
