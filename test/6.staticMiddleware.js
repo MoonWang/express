@@ -6,7 +6,7 @@ let static = require('./middleware/serve-static');
 let app = express();
 
 app.use(static(path.join(__dirname, 'public'), {
-    // dotfiles: 'deny', // 'allow'、'deny'、'ignore'
+    // dotfiles: 'allow', // 'allow'、'deny'、'ignore'
     // index: false,
     // redirect: false,
     // extensions: ['html', 'htm'],
