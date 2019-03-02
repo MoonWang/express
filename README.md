@@ -400,7 +400,11 @@ express.static(root, [options]);
 
 ### 1.2 实现
 
-1. 约定第三方中间件都是一个函数(用于传参)，执行后返回 function(req, res, next){} 函数用于 app.use 添加
-2. 读取静态文件，查看是否存在该路径，不存在则跳过当前中间件，存在则读流写给 res ，并设置 Content-Type 响应头
+> 约定第三方中间件都是一个函数(用于传参)，执行后返回 function(req, res, next){} 函数用于 app.use 添加
+
+1. 读取静态文件，查看是否存在该路径，不存在则跳过当前中间件，存在则读流写给 res ，并设置 Content-Type 响应头
     - 测试：http://localhost:8080/index.html
-3. 设置 dotfiles ，根据文件名判断
+2. 设置 dotfiles ，根据文件名判断
+    - 测试：http://localhost:8080/.test
+3. 设置 redirect ，设置 index 
+    - 测试：http://localhost:8080/help
