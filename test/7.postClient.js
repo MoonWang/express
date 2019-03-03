@@ -1,6 +1,7 @@
 // 测试 body-parse 中间件
 let http = require('http');
 let querystring = require('querystring');
+let qs = require('qs');
 
 let options = {
     host: 'localhost',
@@ -9,9 +10,9 @@ let options = {
     path: '/user',
     headers: {
         // 1.1 测试 json
-        'Content-Type': "application/json"
+        // 'Content-Type': "application/json"
         // 2.1 测试 urlencoded
-        // 'Content-Type': "application/x-www-form-urlencoded"
+        'Content-Type': "application/x-www-form-urlencoded"
         // 3.1 测试 text
         // 'Content-Type': "text/plain"
     }
@@ -32,13 +33,18 @@ req.on('error' , err => {
 
 let postData;
 // 1.2 测试 json
-postData = JSON.stringify({
-    'msg': 'moon 王'
-});
-// 2.2 测试 urlencoded
-// postData = querystring.stringify({
+// postData = JSON.stringify({
 //     'msg': 'moon 王'
 // });
+// 2.2 测试 urlencoded
+let testData = {
+    msg: 'moon 王',
+    other: {
+        age: 18
+    }
+};
+// postData = querystring.stringify(testData);
+postData = qs.stringify(testData);
 // 3.2 测试 text/plain
 // postData = 'moon 王';
 

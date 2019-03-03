@@ -22,6 +22,7 @@
     "express": "^4.16.4",
     "methods": "^1.1.2",
     "mime": "^2.4.0",
-    "path-to-regexp": "^3.0.0"
+    "path-to-regexp": "^3.0.0",
+    "qs": "^6.6.0"
   }
 }

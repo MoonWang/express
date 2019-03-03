@@ -22,4 +22,29 @@ bodyParser.json = function() {
     }
 };
 
+bodyParser.urlencoded = function(options = {}) {
+    // extended：true 使用 qs，false 使用 querystring 
+    // 不推荐使用默认值
+    let { extended = true } = options;
+
+    return function(req, res, next) {
+        let contentType = req.headers['content-type'];
+        if (contentType == 'application/x-www-form-urlencoded') {
+            let buffers = [];
+            req.on('data', function (data) {
+                buffers.push(data);
+            });
+            req.on('end', function () {
+                let result = Buffer.concat(buffers).toString();
+                req.body = extended ? 
+                    qs.parse(result) : 
+                    querystring.parse(result);
+                next();
+            });
+        } else {
+            next();
+        }
+    }
+};
+
 module.exports = bodyParser;
