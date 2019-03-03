@@ -35,5 +35,13 @@ app.get('/', (req, res, next) => {
         }
     });
 });
+app.get('/help', (req, res, next) => {
+    res.render('help/index', {
+        title: 'hello2',
+        user: {
+            name: 'moon2'
+        }
+    });
+});
 
 app.listen(8080);
