@@ -1,6 +1,7 @@
 # express 
 
-> 手动实现一个 express 框架，基于 TDD 模式开发，用于加深理解。复习时根据 git log 递进式阅读。
+> - 手动实现一个 express 框架，基于 TDD 模式开发，用于加深理解。复习时根据 git log 递进式阅读。
+> - 注意：要通过手动调试来验证，并且要实现功能向前兼容，新功能开发后要回测旧功能是否正常支持。
 
 ## 项目目录
 
@@ -10,6 +11,9 @@
 ├── lib                     框架源码
 │   ├── application.js      app 应用构造函数
 │   ├── express.js          主入口
+│   ├── html.js             模板处理方法
+│   ├── middleware.js       
+│   │   └── init.js         内置 init 中间件
 │   └── router              
 │       ├── index.js        router 路由器构造函数
 │       ├── layer.js        layer 层构造函数
@@ -20,7 +24,25 @@
     ├── 1.base.js           基本功能
     ├── 2.router.js         路由系统
     ├── 3.middleware.js     中间件
-    └── 4.params.js         路径参数
+    ├── 4.params.js         路径参数
+    ├── 5.template.js       模板
+    ├── 6.staticMiddleware.js 静态服务中间件
+    ├── 7.bodyParseMiddle.js POST 请求 body 解析中间件
+    ├── 7.postClient.js     配合测试用
+    ├── 8.cookie.js         
+    ├── middleware          第三方中间件简单实现
+    │   ├── body-parser.js
+    │   └── serve-static.js
+    ├── public              本地静态资源
+    │   ├── help
+    │   │   └── index.html
+    │   ├── index.css
+    │   ├── index.html
+    │   └── index2.htm
+    └── views               模板资源
+        ├── help
+        │   └── index.html
+        └── index.html
 ```
 
 ## 一、构建基本服务器
@@ -437,3 +459,15 @@ express.static(root, [options]);
 - 处理压缩类型
     - 判断 Content-Encoding 请求头，使用 zlib 模块解压缩，以 gzip 格式做演示
 
+## 三、cookie 和 session
+
+### 3.1 res.cookie 和 cookie-parser 中间件基础用法
+
+1. 调用第三方中间件 cookie-parser
+    - 如果传参，则为签名所用的秘钥(意义是防篡改)
+2. express 内部实现 res.cookie 方法用于设置 cookie
+    - 其中参数 signed 为真时表示用 cookie-signature 库的 sign 方法签名
+3. 从 req 中获取 cookie 信息
+    - 由 cookie-parser 中间件进行赋能
+    - req.cookies 获取普通 cookie 
+    - req.signedCookies 获取签名 cookie 

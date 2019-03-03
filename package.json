@@ -19,6 +19,8 @@
   "dependencies": {
     "body-parse": "^0.1.0",
     "content-type": "^1.0.4",
+    "cookie-parser": "^1.4.4",
+    "cookie-signature": "^1.1.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "iconv-lite": "^0.4.24",
