@@ -412,3 +412,22 @@ express.static(root, [options]);
     - http://localhost:8080/index2
 5. 设置 etag、lastModified、maxAge
 6. 设置 setHeaders 
+
+## 二、body-parser 请求体解析中间件
+
+### 2.1 用途
+
+- 处理不同类型的请求体：如 text、json、urlencoded 等，对应的报文主体的格式不同
+- 处理不同的编码：如 utf8、gbk 等
+- 处理不同的压缩类型：如 gzip、deflate 等
+
+### 2.2 实现
+
+- 处理内容类型(根据 `Content-Type` 判断)
+    1. application/json
+        - JSON.stringify JSON.parse
+    2. application/x-www-form-urlencoded
+    3. text/plain
+- 处理编码
+- 处理压缩类型
+

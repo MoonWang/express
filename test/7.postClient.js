@@ -1,0 +1,47 @@
+// 测试 body-parse 中间件
+let http = require('http');
+let querystring = require('querystring');
+
+let options = {
+    host: 'localhost',
+    port: 8080,
+    method: 'POST',
+    path: '/user',
+    headers: {
+        // 1.1 测试 json
+        'Content-Type': "application/json"
+        // 2.1 测试 urlencoded
+        // 'Content-Type': "application/x-www-form-urlencoded"
+        // 3.1 测试 text
+        // 'Content-Type': "text/plain"
+    }
+}
+let req = http.request(options, res => {
+    res.setEncoding('utf8');
+    res.on('data', (chunk) => {
+        console.log(`响应主体: ${chunk}`);
+    });
+    res.on('end', () => {
+        console.log('响应中已无数据');
+    });
+});
+
+req.on('error' , err => {
+    console.log(err);
+});
+
+let postData;
+// 1.2 测试 json
+postData = JSON.stringify({
+    'msg': 'moon 王'
+});
+// 2.2 测试 urlencoded
+// postData = querystring.stringify({
+//     'msg': 'moon 王'
+// });
+// 3.2 测试 text/plain
+// postData = 'moon 王';
+
+// 将数据写入请求主体。
+req.write(postData);
+req.end();
