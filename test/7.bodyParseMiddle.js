@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 // 支持 application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // 支持 text/plain
-// app.use(bodyParser.text());
+app.use(bodyParser.text());
 
 app.post('/user', (req, res) => {
     let body = req.body;

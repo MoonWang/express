@@ -12,9 +12,9 @@ let options = {
         // 1.1 测试 json
         // 'Content-Type': "application/json"
         // 2.1 测试 urlencoded
-        'Content-Type': "application/x-www-form-urlencoded"
+        // 'Content-Type': "application/x-www-form-urlencoded"
         // 3.1 测试 text
-        // 'Content-Type': "text/plain"
+        'Content-Type': "text/plain"
     }
 }
 let req = http.request(options, res => {
@@ -37,16 +37,16 @@ let postData;
 //     'msg': 'moon 王'
 // });
 // 2.2 测试 urlencoded
-let testData = {
-    msg: 'moon 王',
-    other: {
-        age: 18
-    }
-};
+// let testData = {
+//     msg: 'moon 王',
+//     other: {
+//         age: 18
+//     }
+// };
 // postData = querystring.stringify(testData);
-postData = qs.stringify(testData);
+// postData = qs.stringify(testData);
 // 3.2 测试 text/plain
-// postData = 'moon 王';
+postData = 'moon 王';
 
 // 将数据写入请求主体。
 req.write(postData);
