@@ -1,5 +1,7 @@
 let querystring = require('querystring');
 let qs = require('qs');
+let { parse } = require('content-type');
+let iconv = require('iconv-lite');
 
 const bodyParser = Object.create(null);
 
@@ -23,7 +25,7 @@ bodyParser.json = function() {
 };
 
 bodyParser.urlencoded = function(options = {}) {
-    // extended：true 使用 qs，false 使用 querystring 
+    // extended：true 使用 qs，false 使用 querystring ，参数嵌套的区别
     // 不推荐使用默认值
     let { extended = true } = options;
 
@@ -50,14 +52,19 @@ bodyParser.urlencoded = function(options = {}) {
 bodyParser.text = function() {
     return function(req, res, next) {
         let contentType = req.headers['content-type'];
-        if (contentType == 'text/plain') {
+        contentType = parse(contentType); // { type: "text/plain", parameters:Object {charset: "gbk"} }
+        let type = contentType.type;
+        let charset = contentType.parameters.charset || 'utf8';
+        if (type == 'text/plain') {
             let buffers = [];
             req.on('data', function (data) {
                 buffers.push(data);
             });
             req.on('end', function () {
-                let result = Buffer.concat(buffers).toString();
-                req.body = result;
+                let result = Buffer.concat(buffers);
+                req.body = Buffer.isEncoding(charset) ? 
+                    result.toString(charset) : 
+                    iconv.decode(result, charset);
                 next();
             });
         } else {

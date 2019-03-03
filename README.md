@@ -427,7 +427,12 @@ express.static(root, [options]);
     1. application/json
         - JSON.stringify JSON.parse
     2. application/x-www-form-urlencoded
+        - qs 支持嵌套，querysting 不支持嵌套
     3. text/plain
 - 处理编码
+    - 使用 content-type 第三方包的 parse 解析 Content-type 获取 charset 参数
+        - 解析后结果：{ type: "text/plain", parameters:Object {charset: "gbk"} }
+    - 使用 iconv-lite 第三方包进行不支持格式的编码、解码
+    - 使用 Buffer.isEncoding(charset) 判断是否支持，选择解码方式
 - 处理压缩类型
 

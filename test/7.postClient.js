@@ -2,6 +2,11 @@
 let http = require('http');
 let querystring = require('querystring');
 let qs = require('qs');
+let iconv = require('iconv-lite');
+
+// 4.1 测试编码
+// let encoding = 'gbk';
+let encoding = 'gb-2312';
 
 let options = {
     host: 'localhost',
@@ -14,7 +19,9 @@ let options = {
         // 2.1 测试 urlencoded
         // 'Content-Type': "application/x-www-form-urlencoded"
         // 3.1 测试 text
-        'Content-Type': "text/plain"
+        // 'Content-Type': "text/plain"
+        // 4.2 测试编码
+        'Content-Type': "text/plain;charset=" + encoding
     }
 }
 let req = http.request(options, res => {
@@ -47,6 +54,8 @@ let postData;
 // postData = qs.stringify(testData);
 // 3.2 测试 text/plain
 postData = 'moon 王';
+// 4.3 测试编码
+postData = iconv.encode(postData, encoding);
 
 // 将数据写入请求主体。
 req.write(postData);

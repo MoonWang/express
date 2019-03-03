@@ -18,8 +18,10 @@
   "homepage": "https://github.com/MoonWang/express#readme",
   "dependencies": {
     "body-parse": "^0.1.0",
+    "content-type": "^1.0.4",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
+    "iconv-lite": "^0.4.24",
     "methods": "^1.1.2",
     "mime": "^2.4.0",
     "path-to-regexp": "^3.0.0",
