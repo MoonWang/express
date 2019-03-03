@@ -1,5 +1,7 @@
 // 测试 body-parse 中间件
 let http = require('http');
+let zlib = require('zlib');
+
 let querystring = require('querystring');
 let qs = require('qs');
 let iconv = require('iconv-lite');
@@ -7,6 +9,9 @@ let iconv = require('iconv-lite');
 // 4.1 测试编码
 // let encoding = 'gbk';
 let encoding = 'gb-2312';
+
+// 5.1 测试压缩
+let zlibType = 'gzip';
 
 let options = {
     host: 'localhost',
@@ -21,7 +26,9 @@ let options = {
         // 3.1 测试 text
         // 'Content-Type': "text/plain"
         // 4.2 测试编码
-        'Content-Type': "text/plain;charset=" + encoding
+        'Content-Type': "text/plain;charset=" + encoding,
+        // 5.1 测试压缩
+        'Content-Encoding': zlibType
     }
 }
 let req = http.request(options, res => {
@@ -58,5 +65,10 @@ postData = 'moon 王';
 postData = iconv.encode(postData, encoding);
 
 // 将数据写入请求主体。
-req.write(postData);
-req.end();
+// req.write(postData);
+// req.end();
+
+// 5.3 测试压缩
+zlib[zlibType](postData, (err, data) => {
+    req.end(data);
+});

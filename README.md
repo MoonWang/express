@@ -435,4 +435,5 @@ express.static(root, [options]);
     - 使用 iconv-lite 第三方包进行不支持格式的编码、解码
     - 使用 Buffer.isEncoding(charset) 判断是否支持，选择解码方式
 - 处理压缩类型
+    - 判断 Content-Encoding 请求头，使用 zlib 模块解压缩，以 gzip 格式做演示
 

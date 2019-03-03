@@ -1,3 +1,4 @@
+let zlib = require('zlib');
 let querystring = require('querystring');
 let qs = require('qs');
 let { parse } = require('content-type');
@@ -61,7 +62,12 @@ bodyParser.text = function() {
                 buffers.push(data);
             });
             req.on('end', function () {
+                let zlibType = req.headers['content-encoding'];
                 let result = Buffer.concat(buffers);
+                // 只做了一种处理，且是同步的，正常应该做兼容处理，且异步的
+                if(zlibType == 'gzip') {
+                    result = zlib.gunzipSync(result);
+                }
                 req.body = Buffer.isEncoding(charset) ? 
                     result.toString(charset) : 
                     iconv.decode(result, charset);
