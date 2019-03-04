@@ -471,3 +471,24 @@ express.static(root, [options]);
     - 由 cookie-parser 中间件进行赋能
     - req.cookies 获取普通 cookie 
     - req.signedCookies 获取签名 cookie 
+
+### 3.2 cookie 的参数及 res.cookie 方法完善
+
+- name=value	
+    - 键值对，可以设置要保存的 Key/Value
+- Domain[String]
+    - 域名，默认是当前域名
+- Path[String]
+    - 表示 cookie 影响到的路径，如 'path=/'，默认 '/'
+    - 如果路径不能匹配时，浏览器则不发送这个 Cookie
+    - 匹配方式是前缀匹配
+- Max-Age[Number]
+    - 相对时间，最大失效时间(毫秒)，设置在多少后失效
+    - 过期删除
+- Expires[Date]
+    - 绝对时间，过期时间(秒)，超过改时间 Cookie 失效
+    - 过期删除
+- httpOnly[Boolean]
+    - 为 true 时，通过程序(JS脚本)将无法读取到 COOKIE 信息，防止 XSS 攻击产生
+- Secure[Boolean]
+    - 为 true 时，cookie 在 HTTP 中是无效，在 HTTPS 中才有效
