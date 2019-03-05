@@ -492,3 +492,10 @@ express.static(root, [options]);
     - 为 true 时，通过程序(JS脚本)将无法读取到 COOKIE 信息，防止 XSS 攻击产生
 - Secure[Boolean]
     - 为 true 时，cookie 在 HTTP 中是无效，在 HTTPS 中才有效
+
+### 3.3 使用 cookie 实现权限认证
+
+测试用例：9.auth.js
+- http://localhost:8080/login
+- http://localhost:8080/user
+- http://localhost:8080/help
