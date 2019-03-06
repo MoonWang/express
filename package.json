@@ -23,6 +23,7 @@
     "cookie-signature": "^1.1.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
     "iconv-lite": "^0.4.24",
     "methods": "^1.1.2",
     "mime": "^2.4.0",

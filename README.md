@@ -499,3 +499,39 @@ express.static(root, [options]);
 - http://localhost:8080/login
 - http://localhost:8080/user
 - http://localhost:8080/help
+
+### 3.4 session 说明
+
+> session 是另一种记录客户状态的机制，服务器把客户端信息以某种形式记录在服务器上，再次访问从该 session 中查找状态。
+
+- 数据存放在服务器上
+    - cookie 数据存放在浏览器上
+- 安全系数高，防篡改
+    - cookie 不是很安全，攻击者可以分析存放在本地的 cookie 并进行 cookie 欺骗
+- 使用时需要注意性能
+    - 在一定时间内保存在服务器上，当访问增多，会比较占用服务器性能
+    - 考虑到减轻服务器性能方面，应当使用 cookie
+- 信息存储量大
+    - 单个cookie保存的数据不能超过4K，很多浏览器都限制一个站点最多保存20个cookie
+
+### 3.5 express-session 中间件用法及自定义存储
+
+- resave[Boolean](必须设置)
+    - 为 true 时指每次请求都重新设置 session cookie ，防止过期
+- saveUninitialized[Boolean](必须设置)
+    - 为 true 时指每次请求都设置 session cookie ，无论有没有 session cookie
+- secret[String](必须设置)
+    - 签名用，防篡改，用于计算 signedCookie 放在 cookie 中
+- store[Object]
+    - session 的存储方式，默认存放在内存中，可以使用 redis，mongodb 等，下面会自定义一个 store 实现
+    - 该对象至少拥有 get 、set 、destry 方法
+- genid[Function]
+    - 产生一个新的 session_id 时所使用的函数，默认使用 uid2 这个 npm 包
+- name[String]
+    - 设置 cookie 时保存 session 的字段名称
+    - 默认为 `connect.sid`
+- cookie[Object]
+    - 设置存放 session id 的 cookie 的相关选项
+    - 默认为 (default: { path: '/', httpOnly: true, secure: false, maxAge: null })
+- rolling[Boolean]
+    - 每个请求都重新设置一个 cookie，默认为 false
